@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEONVERSE | عالم المستقبل</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --color-bg: #0F0F3E;
+      --color-glow: #1BE7FF;
+      --color-laser: #00FFAB;
+      --color-pulse: #9C27B0;
+    }
+    
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--color-bg);
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, .title-font {
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .neon-glow {
+      text-shadow: 0 0 5px var(--color-glow), 0 0 10px var(--color-glow), 0 0 20px var(--color-glow);
+    }
+    
+    .laser-glow {
+      text-shadow: 0 0 5px var(--color-laser), 0 0 10px var(--color-laser);
+    }
+    
+    .pulse-glow {
+      text-shadow: 0 0 5px var(--color-pulse), 0 0 10px var(--color-pulse);
+    }
+    
+    .neon-border {
+      border: 2px solid var(--color-glow);
+      box-shadow: 0 0 10px var(--color-glow), inset 0 0 10px var(--color-glow);
+    }
+    
+    .laser-border {
+      border: 2px solid var(--color-laser);
+      box-shadow: 0 0 10px var(--color-laser), inset 0 0 10px var(--color-laser);
+    }
+    
+    .hover-float:hover {
+      transform: translateY(-5px);
+      transition: transform 0.3s ease;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #0F0F3E 0%, #1a1a5a 50%, #0F0F3E 100%);
+    }
+    
+    .cyber-grid {
+      background-image: 
+        linear-gradient(rgba(27, 231, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(27, 231, 255, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    
+    #heroCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    
+    .pulse-animation {
+      animation: pulse 2s infinite ease-in-out;
+    }
+    
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Custom cursor */
+    .custom-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--color-glow);
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: screen;
+    }
+    
+    .custom-cursor-trail {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--color-glow);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.1s, height 0.1s, opacity 0.3s;
+    }
+  </style>
+</head>
+<body class="cyber-grid">
+  <div class="custom-cursor"></div>
+  <div class="custom-cursor-trail"></div>
+  <canvas id="heroCanvas"></canvas>
+  
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 bg-opacity-10 bg-black backdrop-filter backdrop-blur-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-3xl md:text-4xl font-bold neon-glow">
+          <span class="text-white">NEON</span><span class="text-blue-400">VERSE</span>
+        </h1>
+      </div>
+      
+      <nav class="hidden md:flex space-x-8">
+        <a href="#" class="text-white hover:text-blue-400 transition-colors duration-300 title-font">الرئيسية</a>
+        <a href="#products" class="text-white hover:text-green-400 transition-colors duration-300 title-font">المنتجات</a>
+        <a href="#about" class="text-white hover:text-purple-400 transition-colors duration-300 title-font">من نحن</a>
+        <a href="#blog" class="text-white hover:text-blue-400 transition-colors duration-300 title-font">المدونة</a>
+      </nav>
+      
+      <div class="flex items-center space-x-4">
+        <button class="text-white hover:text-blue-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+        <button class="text-white hover:text-blue-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </button>
+        <button class="text-white hover:text-blue-400 relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span class="absolute -top-2 -right-2 bg-blue-500 text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+        </button>
+        
+        <button class="md:hidden text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex items-center justify-center relative overflow-hidden py-20 md:py-32">
+    <div class="container mx-auto px-4 z-10 text-center">
+      <h1 class="text-4xl md:text-7xl font-bold mb-6 neon-glow title-font">
+        <span class="block md:inline">المستقبل</span>
+        <span class="block md:inline">بين يديك</span>
+      </h1>
+      
+      <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto opacity-80">
+        منتجات تكنولوجية خارقة تحول الخيال العلمي إلى واقع ملموس. استعد لدخول عالم NEONVERSE.
+      </p>
+      
+      <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6">
+        <button class="order-2 md:order-1 neon-border bg-transparent text-white py-3 px-8 rounded-md text-lg hover-float transition duration-300 title-font flex items-center justify-center space-x-2 pulse-animation">
+          <span>استكشف المنتجات</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        
+        <button class="order-1 md:order-2 laser-border bg-green-500 bg-opacity-20 text-white py-3 px-8 rounded-md text-lg hover-float transition duration-300 title-font">
+          ادخل المستقبل
+        </button>
+      </div>
+    </div>
+    
+    <div class="absolute bottom-10 left-0 right-0 flex justify-center">
+      <div class="animate-bounce">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section id="products" class="py-20 relative overflow-hidden">
+    <div class="container mx-auto px-4 z-10">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold mb-4 title-font">
+          <span class="text-blue-400 neon-glow">منتجات</span> المستقبل
+        </h2>
+        <p class="text-lg opacity-80 max-w-2xl mx-auto">
+          مجموعة مختارة من أحدث وأقوى منتجاتنا التكنولوجية التي تجمع بين الذكاء الاصطناعي والواقع المعزز وأنظمة التحكم.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Product Card 1 -->
+        <div class="bg-opacity-10 bg-blue-900 backdrop-filter backdrop-blur-sm rounded-lg overflow-hidden hover-float transition duration-500 transform hover:scale-105 group">
+          <div class="relative h-64 overflow-hidden">
+            <img src="/api/placeholder/400/320" alt="نظارات ذكية" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-70"></div>
+            <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">ذكاء اصطناعي</div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 title-font text-blue-400">Vision Neo X200</h3>
+            <p class="text-sm opacity-80 mb-4">نظارات ذكية بتقنية الواقع المعزز ومساعد ذكاء اصطناعي مدمج للتعرف على الأشخاص والأماكن في الوقت الفعلي.</p>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold neon-glow">4,999 ر.س</span>
+              <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">إضافة للسلة</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Product Card 2 -->
+        <div class="bg-opacity-10 bg-purple-900 backdrop-filter backdrop-blur-sm rounded-lg overflow-hidden hover-float transition duration-500 transform hover:scale-105 group">
+          <div class="relative h-64 overflow-hidden">
+            <img src="/api/placeholder/400/320" alt="خاتم ذكي" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-70"></div>
+            <div class="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded">تحكم حركي</div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 title-font text-purple-400">Pulse Ring</h3>
+            <p class="text-sm opacity-80 mb-4">خاتم ذكي للتحكم في الأجهزة المنزلية وشاشات العرض بإيماءات بسيطة من يدك، مع قارئ للنبض وصحة القلب.</p>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold pulse-glow">2,499 ر.س</span>
+              <button class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md">إضافة للسلة</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Product Card 3 -->
+        <div class="bg-opacity-10 bg-green-900 backdrop-filter backdrop-blur-sm rounded-lg overflow-hidden hover-float transition duration-500 transform hover:scale-105 group">
+          <div class="relative h-64 overflow-hidden">
+            <img src="/api/placeholder/400/320" alt="مساعد افتراضي" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black opacity-70"></div>
+            <div class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">واقع معزز</div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 title-font text-green-400">HoloAssist Pro</h3>
+            <p class="text-sm opacity-80 mb-4">مساعد افتراضي بتقنية الهولوجرام ثلاثي الأبعاد، يمكنه التفاعل معك صوتياً وبصرياً في منزلك أو مكتبك.</p>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold laser-glow">7,999 ر.س</span>
+              <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">إضافة للسلة</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-10">
+        <button class="border border-blue-400 text-blue-400 hover:bg-blue-500 hover:bg-opacity-20 px-8 py-3 rounded-md transition duration-300">
+          عرض جميع المنتجات
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 gradient-bg relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold mb-4 title-font">
+          <span class="text-green-400 laser-glow">تجربة</span> لا مثيل لها
+        </h2>
+        <p class="text-lg opacity-80 max-w-2xl mx-auto">
+          منتجات NEONVERSE ليست مجرد أدوات تكنولوجية، بل هي بوابتك لعالم المستقبل.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <!-- Feature 1 -->
+        <div class="text-center p-6 hover-float transition duration-300">
+          <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-blue-500 bg-opacity-20 border border-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 title-font text-blue-400">ذكاء اصطناعي متطور</h3>
+          <p class="opacity-80">أنظمة ذكاء اصطناعي تتعلم من عاداتك وتتكيف معها لتقديم تجربة شخصية فريدة لكل مستخدم.</p>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div class="text-center p-6 hover-float transition duration-300">
+          <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-purple-500 bg-opacity-20 border border-purple-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 title-font text-purple-400">واقع معزز متكامل</h3>
+          <p class="opacity-80">شاهد العالم من حولك بعيون جديدة مع تقنيات الواقع المعزز التي تدمج العالم الافتراضي مع الواقع.</p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="text-center p-6 hover-float transition duration-300">
+          <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-green-500 bg-opacity-20 border border-green-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 title-font text-green-400">أمان مستقبلي</h3>
+          <p class="opacity-80">أنظمة أمان متقدمة تستخدم تقنيات التشفير الكمي والبصمات الحيوية لحماية بياناتك وخصوصيتك.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Assistant -->
+  <div class="fixed bottom-8 right-8 z-50">
+    <button class="bg-blue-500 hover:bg-blue-600 transition duration-300 w-16 h-16 rounded-full flex items-center justify-center neon-border pulse-animation">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-opacity-30 bg-black py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-2xl font-bold mb-4 title-font neon-glow">NEONVERSE</h3>
+          <p class="opacity-70 mb-4">نحن لا نبيع منتجات، بل نبيع لمحة من الغد.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-blue-400 hover:text-blue-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-purple-400 hover:text-purple-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209
